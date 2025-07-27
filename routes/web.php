@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\VideoLikeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -24,6 +25,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/videos/{video}/edit', [VideoController::class, 'edit'])->name('videos.edit');
     Route::put('/videos/{video}', [VideoController::class, 'update'])->name('videos.update');
     Route::delete('/videos/{video}', [VideoController::class, 'destroy'])->name('videos.destroy');
+
+    Route::post('/videos/{video}/like', [VideoLikeController::class, 'like'])->name('videos.like');
+    Route::post('/videos/{video}/dislike', [VideoLikeController::class, 'dislike'])->name('videos.dislike');
+
 });
 
 require __DIR__.'/auth.php';

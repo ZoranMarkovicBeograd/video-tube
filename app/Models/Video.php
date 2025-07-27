@@ -15,5 +15,15 @@ class Video extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function likes()
+    {
+        return $this->hasMany(VideoLike::class)->where('type', 'like');
+    }
+
+    public function dislikes()
+    {
+        return $this->hasMany(VideoLike::class)->where('type', 'dislike');
+    }
 }
 
