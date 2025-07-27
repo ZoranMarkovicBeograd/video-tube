@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-    use App\Models\Video;
-    use App\Models\VideoLike;
-    use Illuminate\Http\Request;
+use App\Models\Video;
+use App\Models\VideoLike;
+use Illuminate\Http\Request;
 
 class VideoLikeController extends Controller
 {
@@ -28,14 +28,11 @@ class VideoLikeController extends Controller
 
         if ($existing) {
             if ($existing->type === $type) {
-                // Ako je već isti tip, ukloni
                 $existing->delete();
             } else {
-                // Inače, ažuriraj
                 $existing->update(['type' => $type]);
             }
         } else {
-            // Nema još, kreiraj
             VideoLike::create([
                 'video_id' => $video->id,
                 'user_id' => $user->id,

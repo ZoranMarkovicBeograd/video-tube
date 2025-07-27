@@ -27,7 +27,7 @@ class VideoController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'video' => 'required|mimes:mp4,mov,avi,wmv|max:512000', // 500MB
+            'video' => 'required|mimes:mp4,mov,avi,wmv|max:512000',
         ]);
 
         $file = $request->file('video');
@@ -35,7 +35,6 @@ class VideoController extends Controller
 
         $slug = Str::slug($request->title);
 
-        // osiguraj jedinstvenost sluga
         $originalSlug = $slug;
         $i = 1;
         while (Video::where('slug', $slug)->exists()) {
