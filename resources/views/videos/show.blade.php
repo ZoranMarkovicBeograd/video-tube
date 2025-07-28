@@ -19,6 +19,9 @@
     Lajkova: {{ $video->likes()->count() }} |
     Dislajkova: {{ $video->dislikes()->count() }}
 </p>
+<br>
+<p>Pregleda: {{ $video->views }}</p>
+
 
 <a href="{{ route('videos.index') }}">Nazad</a>
 

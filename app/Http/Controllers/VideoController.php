@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Video;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -56,6 +55,7 @@ class VideoController extends Controller
     {
         $this->authorizeUser($video);
 
+        $video->increment('views');
         return view('videos.show', compact('video'));
     }
 
