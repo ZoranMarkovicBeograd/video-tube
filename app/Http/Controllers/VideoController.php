@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreVideoRequest;
 use App\Models\Video;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 
 class VideoController extends Controller
@@ -48,7 +50,7 @@ class VideoController extends Controller
         return redirect()->route('videos.create')->with('success', 'Video je uspešno dodat!');
     }
 
-    public function show(Video $video)
+    public function show(Video $video): View
     {
         $this->authorizeUser($video);
 
@@ -56,14 +58,14 @@ class VideoController extends Controller
         return view('videos.show', compact('video'));
     }
 
-    public function edit(Video $video)
+    public function edit(Video $video): View
     {
         $this->authorizeUser($video);
 
         return view('videos.edit', compact('video'));
     }
 
-    public function update(Request $request, Video $video)
+    public function update(Request $request, Video $video): RedirectResponse
     {
         $this->authorizeUser($video);
 
