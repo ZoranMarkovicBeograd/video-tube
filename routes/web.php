@@ -19,8 +19,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::prefix('/videos')->controller(VideoController::class)->name('videos.')->group(function() {
-        Route::get('/', 'index')->name('index');
+
+        Route::view('/', 'videos.index')->name('index');
+
+        // TODO: Move /create to Route::view
         Route::get('/create', 'create')->name('create');
+
         Route::post('/', 'store')->name('store');
         Route::get('/{video}', 'show')->name('show');
         Route::get('/{video}/edit', 'edit')->name('edit');

@@ -12,12 +12,13 @@ class VideoController extends Controller
 {
     public function index()
     {
-        $videos = Video::where('user_id', auth()->id())->get();
-        return view('videos.index', compact('videos'));
+        // TODO: Move to Route::view
+        return view('videos.index');
     }
 
     public function create()
     {
+        // TODO: Move to Route::view
         return view('videos.create');
     }
 
