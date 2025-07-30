@@ -18,6 +18,7 @@ class VideoLikeController extends Controller
         return $this->handleLike($video, 'dislike');
     }
 
+    // TODO: Move to some helper
     private function handleLike(Video $video, string $type)
     {
         $user = auth()->user();
