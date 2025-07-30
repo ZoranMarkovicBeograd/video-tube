@@ -93,8 +93,10 @@ class VideoController extends Controller
         return redirect()->route('videos.index')->with('success', 'Video je obrisan.');
     }
 
+    // TODO: Remove this after you create a middleware
     private function authorizeUser(Video $video): void
     {
+        // TODO: Move to Middleware
         if (auth()->id() !== $video->user_id) {
             abort(403);
         }
