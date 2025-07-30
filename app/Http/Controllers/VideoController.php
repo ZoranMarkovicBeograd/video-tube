@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreVideoRequest;
 use App\Models\Video;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -22,13 +23,8 @@ class VideoController extends Controller
         return view('videos.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreVideoRequest $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'video' => 'required|mimes:mp4,mov,avi,wmv|max:512000',
-        ]);
 
         $file = $request->file('video');
         $path = $file->store('videos', 'public');
@@ -71,7 +67,7 @@ class VideoController extends Controller
     {
         $this->authorizeUser($video);
 
-
+        // TODO: Move to validation request, php artisan make:request ImeRequesta
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
