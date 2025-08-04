@@ -43,5 +43,3 @@ class VideoLikeController extends Controller
         return redirect()->back();
     }
 }
-
-
