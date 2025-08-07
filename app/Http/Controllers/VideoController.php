@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreVideoRequest;
+use App\Http\Requests\ValidationRequest;
 use App\Models\Video;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
@@ -13,19 +14,8 @@ use Illuminate\View\View;
 
 class VideoController extends Controller
 {
-    public function index()
-    {
-        // TODO: Move to Route::view
-        return view('videos.index');
-    }
 
-    public function create()
-    {
-        // TODO: Move to Route::view
-        return view('videos.create');
-    }
-
-    public function store(StoreVideoRequest $request)
+    public function store(StoreVideoRequest $request) : RedirectResponse
     {
 
         $file = $request->file('video');
@@ -52,29 +42,17 @@ class VideoController extends Controller
 
     public function show(Video $video): View
     {
-        $this->authorizeUser($video);
-
         $video->increment('views');
         return view('videos.show', compact('video'));
     }
 
     public function edit(Video $video): View
     {
-        $this->authorizeUser($video);
-
         return view('videos.edit', compact('video'));
     }
 
-    public function update(Request $request, Video $video): RedirectResponse
+    public function update(ValidationRequest $request, Video $video): RedirectResponse
     {
-        $this->authorizeUser($video);
-
-        // TODO: Move to validation request, php artisan make:request ImeRequesta
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-        ]);
-
         $video->update([
             'title' => $request->title,
             'description' => $request->description,
@@ -83,22 +61,12 @@ class VideoController extends Controller
         return redirect()->route('videos.index')->with('success', 'Video je ažuriran.');
     }
 
-    public function destroy(Video $video)
+    public function destroy(Video $video): RedirectResponse
     {
-        $this->authorizeUser($video);
-
         Storage::disk('public')->delete($video->file_path);
         $video->delete();
 
         return redirect()->route('videos.index')->with('success', 'Video je obrisan.');
     }
 
-    // TODO: Remove this after you create a middleware
-    private function authorizeUser(Video $video): void
-    {
-        // TODO: Move to Middleware
-        if (auth()->id() !== $video->user_id) {
-            abort(403);
-        }
-    }
 }

@@ -13,7 +13,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -23,22 +23,26 @@ Route::middleware('auth')->group(function () {
         Route::view('/', 'videos.index')->name('index');
 
         // TODO: Move /create to Route::view
-        Route::get('/create', 'create')->name('create');
+        Route::view('/create', 'videos.create')->name('create');
 
         Route::post('/', 'store')->name('store');
-        Route::get('/{video}', 'show')->name('show');
-        Route::get('/{video}/edit', 'edit')->name('edit');
-        Route::put('/{video}', 'update')->name('update');
-        Route::delete('/{video}', 'destroy')->name('destroy');
+
+
+        Route::middleware(['video.owner'])->group(function () {
+            Route::get('/{video}', 'show')->name('show');
+            Route::get('/{video}/edit', 'edit')->name('edit');
+            Route::put('/{video}', 'update')->name('update');
+            Route::delete('/{video}', 'destroy')->name('destroy');
+        });
 
         /**
          * TODO: Group this
          */
-        Route::post('/videos/{video}/like', [VideoLikeController::class, 'like'])->name('videos.like');
-        Route::post('/videos/{video}/dislike', [VideoLikeController::class, 'dislike'])->name('videos.dislike');
+        Route::prefix('{video}')->group(function () {
+             Route::post('/like', [VideoLikeController::class, 'like'])->name('like');
+             Route::post('/dislike', [VideoLikeController::class, 'dislike'])->name('dislike');
+        });
     });
-
-
 });
 
 require __DIR__.'/auth.php';
