@@ -1,8 +1,9 @@
+@php use Illuminate\Support\Facades\Auth; @endphp
 <h2>Moji video snimci</h2>
 
 <a href="{{ route('videos.create') }}">➕ Dodaj novi video</a>
 
-@foreach($videos as $video)
+@foreach(Auth::user()->videos as $video)
     <div>
         <h3>{{ $video->title }}</h3>
         <a href="{{ route('videos.show', $video) }}">Pregledaj</a> |
