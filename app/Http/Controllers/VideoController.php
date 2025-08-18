@@ -7,7 +7,6 @@ use App\Http\Requests\ValidationRequest;
 use App\Models\Video;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 

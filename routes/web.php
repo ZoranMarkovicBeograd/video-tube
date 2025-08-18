@@ -21,8 +21,6 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('/videos')->controller(VideoController::class)->name('videos.')->group(function() {
 
         Route::view('/', 'videos.index')->name('index');
-
-        // TODO: Move /create to Route::view
         Route::view('/create', 'videos.create')->name('create');
 
         Route::post('/', 'store')->name('store');
@@ -35,9 +33,6 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/{video}', 'destroy')->name('destroy');
         });
 
-        /**
-         * TODO: Group this
-         */
         Route::prefix('{video}')->group(function () {
              Route::post('/like', [VideoLikeController::class, 'like'])->name('like');
              Route::post('/dislike', [VideoLikeController::class, 'dislike'])->name('dislike');
