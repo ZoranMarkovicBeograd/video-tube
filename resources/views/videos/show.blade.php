@@ -1,4 +1,7 @@
 <h2>{{ $video->title }}</h2>
+@if($video->thumbnail)
+    <img src="{{ asset('storage/' . $video->thumbnail) }}" alt="Thumbnail" width="200">
+@endif
 <video width="640" height="360" controls>
     <source src="{{ asset('storage/' . $video->file_path) }}" type="video/mp4">
     Vaš browser ne podržava video tag.

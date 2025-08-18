@@ -9,11 +9,13 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use App\Traits\HandlesImageUpload;
+
 
 
 class VideoController extends Controller
 {
-
+    use HandlesImageUpload;
     public function store(StoreVideoRequest $request) : RedirectResponse
     {
 
@@ -28,12 +30,19 @@ class VideoController extends Controller
             $slug = $originalSlug . '-' . $i++;
         }
 
+        $thumbnailPath = null;
+        if ($request->hasFile('thumbnail')) {
+            $thumbnailPath = $this->uploadImage($request->file('thumbnail'));
+        }
+
+
         Video::create([
             'user_id' => auth()->id(),
             'title' => $request->title,
             'slug' => $slug,
             'description' => $request->description,
             'file_path' => $path,
+            'thumbnail' => $thumbnailPath,
         ]);
 
         return redirect()->route('videos.create')->with('success', 'Video je uspešno dodat!');
