@@ -10,13 +10,15 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use App\Traits\HandlesImageUpload;
+use App\Services\VideoThumbnailService;
+
 
 
 
 class VideoController extends Controller
 {
     use HandlesImageUpload;
-    public function store(StoreVideoRequest $request) : RedirectResponse
+    public function store(StoreVideoRequest $request, VideoThumbnailService $thumbnailService) : RedirectResponse
     {
 
         $file = $request->file('video');
@@ -30,10 +32,7 @@ class VideoController extends Controller
             $slug = $originalSlug . '-' . $i++;
         }
 
-        $thumbnailPath = null;
-        if ($request->hasFile('thumbnail')) {
-            $thumbnailPath = $this->uploadImage($request->file('thumbnail'));
-        }
+        $thumbnailPath = $thumbnailService->processThumbnail($request);
 
 
         Video::create([
@@ -71,7 +70,11 @@ class VideoController extends Controller
 
     public function destroy(Video $video): RedirectResponse
     {
-        Storage::disk('public')->delete($video->file_path);
+        $publicDisk = Storage::disk('public');
+
+        if ($publicDisk->exists($video->file_path)) {
+            $publicDisk->delete($video->file_path);
+        }
         $video->delete();
 
         return redirect()->route('videos.index')->with('success', 'Video je obrisan.');
