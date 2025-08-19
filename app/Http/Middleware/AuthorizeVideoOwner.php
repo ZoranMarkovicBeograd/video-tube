@@ -18,10 +18,6 @@ class AuthorizeVideoOwner
     {
         $video = $request->route('video');
 
-        if (auth()->id() !== $video->user_id) {
-            abort(403);
-        }
-
-        return $next($request);
+        return auth()->id() !== $video->user_id ? abort(403) : $next($request);
     }
 }

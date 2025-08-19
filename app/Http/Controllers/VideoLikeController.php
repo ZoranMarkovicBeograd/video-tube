@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class VideoLikeController extends Controller
 {
-    public function __construct(private VideoLikeService $videoLikeService) {}
+    public function __construct(private readonly  VideoLikeService $videoLikeService) {}
 
     public function like(Video $video): RedirectResponse
     {

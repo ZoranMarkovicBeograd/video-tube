@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\VideoLikeController;
+use App\Http\Middleware\AuthorizeVideoOwner;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,7 +27,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/', 'store')->name('store');
 
 
-        Route::middleware(['video.owner'])->group(function () {
+        Route::middleware(AuthorizeVideoOwner::class)->group(function () {
             Route::get('/{video}', 'show')->name('show');
             Route::get('/{video}/edit', 'edit')->name('edit');
             Route::put('/{video}', 'update')->name('update');

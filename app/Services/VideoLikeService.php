@@ -9,9 +9,7 @@ class VideoLikeService
 {
     public function handle(Video $video, int $userId, string $type): void
     {
-        $existing = VideoLike::where('video_id', $video->id)
-            ->where('user_id', $userId)
-            ->first();
+        $existing = VideoLike::firstWhere(['video_id' => $video->id, 'user_id' => $userId]);
 
         if ($existing) {
             if ($existing->type === $type) {
