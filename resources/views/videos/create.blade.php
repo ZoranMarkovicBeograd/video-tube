@@ -21,6 +21,11 @@
     <input type="file" name="video" id="video" accept="video/*" required>
     <br>
 
+    <label for="thumbnail">Thumbnail (slika):</label>
+    <input type="file" name="thumbnail" id="thumbnail" accept="image/*">
+    <br>
+
+
     <button type="submit">Dodaj video</button>
 </form>
 

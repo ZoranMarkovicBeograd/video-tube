@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\VideoLikeController;
+use App\Http\Middleware\AuthorizeVideoOwner;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -13,22 +14,31 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/videos', [VideoController::class, 'index'])->name('videos.index');
-    Route::get('/videos/create', [VideoController::class, 'create'])->name('videos.create');
-    Route::post('/videos', [VideoController::class, 'store'])->name('videos.store');
-    Route::get('/videos/{video}', [VideoController::class, 'show'])->name('videos.show');
-    Route::get('/videos/{video}/edit', [VideoController::class, 'edit'])->name('videos.edit');
-    Route::put('/videos/{video}', [VideoController::class, 'update'])->name('videos.update');
-    Route::delete('/videos/{video}', [VideoController::class, 'destroy'])->name('videos.destroy');
+    Route::prefix('/videos')->controller(VideoController::class)->name('videos.')->group(function() {
 
-    Route::post('/videos/{video}/like', [VideoLikeController::class, 'like'])->name('videos.like');
-    Route::post('/videos/{video}/dislike', [VideoLikeController::class, 'dislike'])->name('videos.dislike');
+        Route::view('/', 'videos.index')->name('index');
+        Route::view('/create', 'videos.create')->name('create');
 
+        Route::post('/', 'store')->name('store');
+
+
+        Route::middleware(AuthorizeVideoOwner::class)->group(function () {
+            Route::get('/{video}', 'show')->name('show');
+            Route::get('/{video}/edit', 'edit')->name('edit');
+            Route::put('/{video}', 'update')->name('update');
+            Route::delete('/{video}', 'destroy')->name('destroy');
+        });
+
+        Route::prefix('{video}')->group(function () {
+             Route::post('/like', [VideoLikeController::class, 'like'])->name('like');
+             Route::post('/dislike', [VideoLikeController::class, 'dislike'])->name('dislike');
+        });
+    });
 });
 
 require __DIR__.'/auth.php';

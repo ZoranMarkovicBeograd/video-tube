@@ -2,32 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreVideoRequest;
+use App\Http\Requests\ValidationRequest;
 use App\Models\Video;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
+use App\Traits\HandlesImageUpload;
+use App\Services\VideoThumbnailService;
+
+
 
 
 class VideoController extends Controller
 {
-    public function index()
+    use HandlesImageUpload;
+    public function store(StoreVideoRequest $request, VideoThumbnailService $thumbnailService) : RedirectResponse
     {
-        $videos = Video::where('user_id', auth()->id())->get();
-        return view('videos.index', compact('videos'));
-    }
-
-    public function create()
-    {
-        return view('videos.create');
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'video' => 'required|mimes:mp4,mov,avi,wmv|max:512000',
-        ]);
 
         $file = $request->file('video');
         $path = $file->store('videos', 'public');
@@ -40,42 +32,34 @@ class VideoController extends Controller
             $slug = $originalSlug . '-' . $i++;
         }
 
+        $thumbnailPath = $thumbnailService->processThumbnail($request);
+
+
         Video::create([
             'user_id' => auth()->id(),
             'title' => $request->title,
             'slug' => $slug,
             'description' => $request->description,
             'file_path' => $path,
+            'thumbnail' => $thumbnailPath,
         ]);
 
         return redirect()->route('videos.create')->with('success', 'Video je uspešno dodat!');
     }
 
-    public function show(Video $video)
+    public function show(Video $video): View
     {
-        $this->authorizeUser($video);
-
         $video->increment('views');
         return view('videos.show', compact('video'));
     }
 
-    public function edit(Video $video)
+    public function edit(Video $video): View
     {
-        $this->authorizeUser($video);
-
         return view('videos.edit', compact('video'));
     }
 
-    public function update(Request $request, Video $video)
+    public function update(ValidationRequest $request, Video $video): RedirectResponse
     {
-        $this->authorizeUser($video);
-
-
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-        ]);
-
         $video->update([
             'title' => $request->title,
             'description' => $request->description,
@@ -84,20 +68,16 @@ class VideoController extends Controller
         return redirect()->route('videos.index')->with('success', 'Video je ažuriran.');
     }
 
-    public function destroy(Video $video)
+    public function destroy(Video $video): RedirectResponse
     {
-        $this->authorizeUser($video);
+        $publicDisk = Storage::disk('public');
 
-        Storage::disk('public')->delete($video->file_path);
+        if ($publicDisk->exists($video->file_path)) {
+            $publicDisk->delete($video->file_path);
+        }
         $video->delete();
 
         return redirect()->route('videos.index')->with('success', 'Video je obrisan.');
     }
 
-    private function authorizeUser(Video $video): void
-    {
-        if (auth()->id() !== $video->user_id) {
-            abort(403);
-        }
-    }
 }
