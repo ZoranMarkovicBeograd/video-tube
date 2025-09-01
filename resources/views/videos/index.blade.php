@@ -2,6 +2,10 @@
 
 @auth
     <a href="{{ route('videos.create') }}">➕ Dodaj novi video</a>
+    <form action="{{ route('search.index') }}" method="GET">
+        <input type="text" name="q" placeholder="Pretraži videe..." value="{{ request('q') }}">
+        <button type="submit">🔍</button>
+    </form>
 @endauth
 
 @foreach($videos as $video)
