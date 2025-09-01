@@ -18,6 +18,13 @@ use App\Services\VideoThumbnailService;
 class VideoController extends Controller
 {
     use HandlesImageUpload;
+
+    public function index() : View
+    {
+        $videos = Video::latest()->get();
+
+        return view('videos.index', compact('videos'));
+    }
     public function store(StoreVideoRequest $request, VideoThumbnailService $thumbnailService) : RedirectResponse
     {
 

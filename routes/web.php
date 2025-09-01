@@ -21,7 +21,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('/videos')->controller(VideoController::class)->name('videos.')->group(function() {
 
-        Route::view('/', 'videos.index')->name('index');
+        Route::get('/','index')->name('index');
         Route::view('/create', 'videos.create')->name('create');
 
         Route::post('/', 'store')->name('store');
