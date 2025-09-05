@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\UserVideoController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\VideoLikeController;
 use App\Http\Middleware\AuthorizeVideoOwner;
@@ -19,9 +21,13 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('/search', [SearchController::class, 'index'])->name('search.index');
+
+    Route::get('/users/{user}', [UserVideoController::class, 'index'])->name('users.videos.index');
+
     Route::prefix('/videos')->controller(VideoController::class)->name('videos.')->group(function() {
 
-        Route::view('/', 'videos.index')->name('index');
+        Route::get('/','index')->name('index');
         Route::view('/create', 'videos.create')->name('create');
 
         Route::post('/', 'store')->name('store');

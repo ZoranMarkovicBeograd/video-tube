@@ -1,3 +1,4 @@
+@php use Illuminate\Support\Facades\Auth; @endphp
 <h2>{{ $video->title }}</h2>
 @if($video->thumbnail)
     <img src="{{ asset('storage/' . $video->thumbnail) }}" alt="Thumbnail" width="200">
@@ -21,6 +22,12 @@
 <p>
     Lajkova: {{ $video->likes()->count() }} |
     Dislajkova: {{ $video->dislikes()->count() }}
+</p>
+<p>
+    Autor:
+    <a href="{{ route('users.videos.index', $video->user) }}">
+        {{ $video->user->name }}
+    </a>
 </p>
 <br>
 <p>Pregleda: {{ $video->views }}</p>
